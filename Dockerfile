@@ -7,7 +7,7 @@ ENV ZNC_VERSION 1.6.1
 
 RUN apt-get update \
     && apt-get install -y sudo wget build-essential libssl-dev libperl-dev \
-               pkg-config swig3.0 libicu-dev ca-certificates \
+               pkg-config swig3.0 libicu-dev ca-certificates git \
     && mkdir -p /src \
     && cd /src \
     && wget "http://znc.in/releases/archive/znc-${ZNC_VERSION}.tar.gz" \
@@ -20,6 +20,14 @@ RUN apt-get update \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /src* /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN git clone https://github.com/ProjectFirrre/zncstrap/ /zncstrap \
+    && cd /zncstrap \
+    && git checkout dev \
+    && rm -Rf /usr/local/share/znc/webskins \
+    && rm -Rf /usr/local/share/znc/modules \
+    && mv webskins /usr/local/share/znc \
+    && mv modules /usr/local/share/znc
 
 RUN useradd znc
 ADD docker-entrypoint.sh /entrypoint.sh
